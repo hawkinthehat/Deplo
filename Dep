@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Momentum - One Step at a Time</title>
+    <style>
+        :root { --bg: #0f172a; --card: #1e293b; --accent: #fbbf24; --text: #f1f5f9; --soft-blue: #38bdf8; }
+        body { background: var(--bg); color: var(--text); font-family: system-ui; text-align: center; margin: 0; }
+        .screen { height: 90vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+        .btn { background: var(--card); border: 1px solid var(--accent); color: var(--accent); padding: 18px; border-radius: 12px; width: 85%; margin: 10px; font-size: 1.1rem; cursor: pointer; }
+        .btn-blue { border-color: var(--soft-blue); color: var(--soft-blue); }
+        #task-display { font-size: 1.5rem; margin: 20px; min-height: 60px; color: var(--accent); font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div id="main" class="screen">
+        <h1 style="color: var(--soft-blue);">Momentum</h1>
+        <p>You don't have to do it all. Just do one thing.</p>
+        
+        <div id="task-display">Ready for a spark?</div>
+        
+        <button class="btn" onclick="nextTask()">Get a Micro-Win</button>
+        <button class="btn btn-blue" onclick="showTether()">Reach Out (Low Energy)</button>
+        <button class="btn" style="border:none; font-size:0.8rem; opacity:0.6;" onclick="showHorizon()">View the Horizon</button>
+    </div>
+
+    <script>
+        const tasks = [
+            "Drink 4 sips of water.",
+            "Stand up and shake your arms.",
+            "Open one curtain or window.",
+            "Text 'Thinking of you' to one person.",
+            "Step outside for 30 seconds.",
+            "Wash just one dish."
+        ];
+
+        function nextTask() {
+            const task = tasks[Math.floor(Math.random() * tasks.length)];
+            document.getElementById('task-display').innerText = task;
+        }
+
+        function showTether() {
+            const templates = [
+                "Hey, it's been a heavy week. Just wanted to say hi.",
+                "Thinking of you. No need to reply, just sending love.",
+                "Saw this and thought of you. Hope you're okay."
+            ];
+            const msg = templates[Math.floor(Math.random() * templates.length)];
+            if(confirm("Copy this to clipboard?\n\n\"" + msg + "\"")) {
+                navigator.clipboard.writeText(msg);
+                alert("Copied! Now send it to a friend.");
+            }
+        }
+
+        function showHorizon() {
+            alert("The sun will set at 7:12 PM today. Today is almost over, and tomorrow is a clean slate. You did enough today.");
+        }
+    </script>
+</body>
+</html>
