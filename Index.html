@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Defuse | Tactical Neutralization</title>
+    <style>
+        :root { --bg: #0f172a; --teal: #2dd4bf; --text: #f1f5f9; --card: #1e293b; --red: #f43f5e; }
+        body { background: var(--bg); color: var(--text); font-family: -apple-system, sans-serif; text-align: center; margin: 0; padding: 20px; }
+        
+        .screen { display: none; min-height: 80vh; flex-direction: column; justify-content: center; align-items: center; }
+        .active { display: flex; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .btn { background: var(--teal); color: var(--bg); border: none; padding: 18px; border-radius: 12px; width: 100%; max-width: 320px; font-weight: bold; font-size: 1.1rem; margin: 10px 0; cursor: pointer; transition: 0.2s; }
+        .btn:active { transform: scale(0.98); }
+        .sos { background: var(--red); color: white; }
+        
+        .task-box { background: var(--card); border: 2px solid var(--teal); padding: 30px; border-radius: 15px; margin: 20px; font-size: 1.4rem; line-height: 1.4; }
+        
+        #log-container { margin-top: 40px; text-align: left; width: 100%; max-width: 320px; opacity: 0.8; }
+        .log-item { font-size: 0.85rem; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; }
+        .log-tag { color: var(--teal); font-weight: bold; font-size: 0.7rem; text-transform: uppercase; }
+    </style>
+</head>
+<body>
+
+    <div id="home" class="screen active">
+        <h1 style="color: var(--teal); letter-spacing: 4px; margin-bottom: 5px;">DEFUSE</h1>
+        <p style="opacity: 0.5; font-size: 0.9rem; margin-bottom: 30px;">System Status: Operational</p>
+        
+        <button class="btn sos" onclick="startAction('SOS Breathing', 'sos')">SOS: BREATHING</button>
+        <button class="btn" onclick="nextTask()">NEURAL HIJACK</button>
+        <button class="btn" onclick="startAction('Ice Reset', 'ice')" style="background:none; color:var(--teal); border: 1px solid var(--teal);">ICE RESET</button>
+
+        <div id="log-container">
+            <p style="font-size: 0.7rem; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; border-bottom: 1px solid var(--teal); display: inline-block;">Recent Neutralizations</p>
+            <div id="log-list"></div>
+        </div>
+    </div>
+
+    <div id="hijack" class="screen">
+        <h2 style="color: var(--teal);">COGNITIVE TASK</h2>
+        <div class="task-box" id="task-display">Initializing...</div>
+        <button class="btn" onclick="nextTask()">NEXT PROMPT</button>
+        <button class="btn" onclick="saveAndHome('Neural Hijack')" style="background:none; color:white; font-size: 0.8rem;">I FEEL STABLE</button>
+    </div>
+
+    <div id="sos" class="screen">
+        <h2 style="color: var(--red);">Breathe...</h2>
+        <p>Inhale for 4. Hold for 4. Exhale for 4.</p>
+        <button class="btn" onclick="saveAndHome('SOS Breathing')">DONE</button>
+    </div>
+
+    <div id="ice" class="screen">
+        <h2>Ice Dive</h2>
+        <p>Apply cold to face or hands for 15s.</p>
+        <button class="btn" onclick="saveAndHome('Ice Reset')">DONE</button>
+    </div>
+
+    <script>
+        const tasks = [
+            "Find 3 things in the room that are made of WOOD.",
+            "Say the alphabet backwards starting from Z.",
+            "Find a specific shade of NAVY BLUE.",
+            "Subtract 7 from 100, then 7 from that number.",
+            "Name 4 yellow fruits.",
+            "Count 10 deep breaths.",
+            "Name 3 cities starting with the letter 'B'."
+        ];
+
+        function show(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        function startAction(type, screenId) {
+            show(screenId);
+        }
+
+        function nextTask() {
+            show('hijack');
+            const display = document.getElementById('task-display');
+            display.innerText = tasks[Math.floor(Math.random() * tasks.length)];
+        }
+
+        function saveAndHome(type) {
+            const now = new Date();
+            const timeStr = now.getHours() + ":" + now.getMinutes().toString().padStart(2, '0');
+            const logEntry = { type: type, time: timeStr };
+            
+            let history = JSON.parse(localStorage.getItem('defuse_history') || "[]");
+            history.unshift(logEntry); // Add to start
+            if(history.length > 5) history.pop(); // Keep only last 5
+            
+            localStorage.setItem('defuse_history', JSON.stringify(history));
+            renderLog();
+            show('home');
+        }
+
+        function renderLog() {
+            const list = document.getElementById('log-list');
+            const history = JSON.parse(localStorage.getItem('defuse_history') || "[]");
+            
+            if(history.length === 0) {
+                list.innerHTML = "<p style='font-size: 0.8rem; opacity: 0.5;'>No recent logs.</p>";
+                return;
+            }
+
+            list.innerHTML = history.map(item => `
+                <div class="log-item">
+                    <span class="log-tag">${item.type}</span>
+                    <span style="opacity: 0.6;">${item.time}</span>
+                </div>
+            `).join('');
+        }
+
+        // Initial render
+        window.onload = renderLog;
+    </script>
+</body>
+</html>
